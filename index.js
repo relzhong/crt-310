@@ -86,7 +86,7 @@ hardware.CommOpen = port => {
     if (ref.isNull(handle)) {
       return { status: -1 };
     }
-    return { status: 0, handle };
+    return { status: 0, data: { handle } };
   } catch (e) {
     return { status: -1 };
   }
@@ -159,7 +159,7 @@ hardware.CRT310_GetStatus = handle => {
     const rearSetting = ref.alloc(ref.types.byte);
     const res = libcrt.CRT310_GetStatus(handle, atPosition, frontSetting, rearSetting);
     if (res === 0) {
-      return { status: 0, atPosition: atPosition.deref(), frontSetting: frontSetting.deref(), rearSetting: rearSetting.deref() };
+      return { status: 0, data: { atPosition: atPosition.deref(), frontSetting: frontSetting.deref(), rearSetting: rearSetting.deref() } };
     }
     return { status: -1 };
   } catch (e) {
@@ -187,7 +187,7 @@ hardware.MC_ReadTrack = (handle, track) => {
       if (blocks[2]) {
         track3 = (blocks[2][0] === 0x59) ? blocks[2].slice(1).toString() : undefined;
       }
-      return { status: 0, track1, track2, track3 };
+      return { status: 0, data: { track1, track2, track3 } };
     }
     return { status: -1 };
   } catch (e) {
@@ -200,7 +200,7 @@ hardware.GetErrCode = () => {
     const errorCode = ref.alloc(ref.types.int);
     const res = libcrt.GetErrCode(errorCode);
     if (res === 0) {
-      return { status: 0, errorCode: errorCode.deref() };
+      return { status: 0, data: { errorCode: errorCode.deref() } };
     }
     return { status: -1 };
   } catch (e) {
@@ -238,7 +238,7 @@ hardware.CRT_R_DetectCard = handle => {
     const cardInfo = ref.alloc(ref.types.byte);
     const res = libcrt.CRT_R_DetectCard(handle, cardType, cardInfo);
     if (res === 0) {
-      return { status: 0, cardType: cardType.deref(), cardInfo: cardInfo.deref() };
+      return { status: 0, data: { cardType: cardType.deref(), cardInfo: cardInfo.deref() } };
     }
     return { status: -1 };
   } catch (e) {
@@ -253,7 +253,7 @@ hardware.CPU_ColdReset = (handle, mode) => {
     const data = ref.alloc(ref.types.char);
     const res = libcrt.CPU_ColdReset(handle, mode, cpuType, data, len);
     if (res === 0) {
-      return { status: 0, cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() };
+      return { status: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
     }
     return { status: -1 };
   } catch (e) {
@@ -268,7 +268,7 @@ hardware.CPU_WarmReset = handle => {
     const data = ref.alloc(ref.types.char);
     const res = libcrt.CPU_WarmReset(handle, cpuType, data, len);
     if (res === 0) {
-      return { status: 0, cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() };
+      return { status: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
     }
     return { status: -1 };
   } catch (e) {
@@ -284,7 +284,7 @@ hardware.CPU_T0_C_APDU = (handle, apduData) => {
     const res = libcrt.CPU_T0_C_APDU(handle, inData.length, inData, data, len);
     const outData = ref.reinterpret(data, len.deref());
     if (res === 0) {
-      return { status: 0, exData: hex2Str(outData) };
+      return { status: 0, data: { exData: hex2Str(outData) } };
     }
     return { status: -1 };
   } catch (e) {
@@ -300,7 +300,7 @@ hardware.CPU_T1_C_APDU = (handle, apduData) => {
     const res = libcrt.CPU_T1_C_APDU(handle, inData.length, inData, data, len);
     const outData = ref.reinterpret(data, len.deref());
     if (res === 0) {
-      return { status: 0, exData: hex2Str(outData) };
+      return { status: 0, data: { exData: hex2Str(outData) } };
     }
     return { status: -1 };
   } catch (e) {
