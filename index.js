@@ -67,7 +67,7 @@ const libcrt = ffi.Library(path.join(__dirname, './lib/CRT_310'), {
   CRT310_Reset: [ 'int', [ 'pointer', 'int' ]], // 0=不弹卡 1=前端弹卡 2=后端弹卡
   CRT310_CardSetting: [ 'int', [ 'pointer', 'int', 'int' ]],
   CRT310_CardPosition: [ 'int', [ 'pointer', 'int' ]],
-  CRT310_GetStatus: [ 'int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
+  CRT310_Geterror: [ 'int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
   CRT310_MovePosition: [ 'int', [ 'pointer', 'int' ]],
   MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', 'pointer', 'pointer' ]],
   CRT_IC_CardOpen: [ 'int', [ 'pointer' ]],
@@ -84,11 +84,11 @@ hardware.CommOpen = port => {
   try {
     const handle = libcrt.CommOpen(port);
     if (ref.isNull(handle)) {
-      return { status: -1 };
+      return { error: -1 };
     }
-    return { status: 0, data: { handle } };
+    return { error: 0, data: { handle } };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -96,11 +96,11 @@ hardware.CommClose = handle => {
   try {
     const res = libcrt.CommClose(handle);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -108,11 +108,11 @@ hardware.CRT310_Reset = (handle, eject) => {
   try {
     const res = libcrt.CRT310_Reset(handle, eject);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -120,11 +120,11 @@ hardware.CRT310_CardSetting = (handle, cardIn, enableBackIn) => {
   try {
     const res = libcrt.CRT310_CardSetting(handle, cardIn, enableBackIn);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -132,11 +132,11 @@ hardware.CRT310_CardPosition = (handle, position) => {
   try {
     const res = libcrt.CRT310_CardPosition(handle, position);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -144,11 +144,11 @@ hardware.CRT310_MovePosition = (handle, position) => {
   try {
     const res = libcrt.CRT310_MovePosition(handle, position);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -159,11 +159,11 @@ hardware.CRT310_GetStatus = handle => {
     const rearSetting = ref.alloc(ref.types.byte);
     const res = libcrt.CRT310_GetStatus(handle, atPosition, frontSetting, rearSetting);
     if (res === 0) {
-      return { status: 0, data: { atPosition: atPosition.deref(), frontSetting: frontSetting.deref(), rearSetting: rearSetting.deref() } };
+      return { error: 0, data: { atPosition: atPosition.deref(), frontSetting: frontSetting.deref(), rearSetting: rearSetting.deref() } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -187,11 +187,11 @@ hardware.MC_ReadTrack = (handle, track) => {
       if (blocks[2]) {
         track3 = (blocks[2][0] === 0x59) ? blocks[2].slice(1).toString() : undefined;
       }
-      return { status: 0, data: { track1, track2, track3 } };
+      return { error: 0, data: { track1, track2, track3 } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -200,11 +200,11 @@ hardware.GetErrCode = () => {
     const errorCode = ref.alloc(ref.types.int);
     const res = libcrt.GetErrCode(errorCode);
     if (res === 0) {
-      return { status: 0, data: { errorCode: errorCode.deref() } };
+      return { error: 0, data: { errorCode: errorCode.deref() } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -212,11 +212,11 @@ hardware.CRT_IC_CardOpen = handle => {
   try {
     const res = libcrt.CRT_IC_CardOpen(handle);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -224,11 +224,11 @@ hardware.CRT_IC_CardClose = handle => {
   try {
     const res = libcrt.CRT_IC_CardClose(handle);
     if (res === 0) {
-      return { status: 0 };
+      return { error: 0 };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -238,11 +238,11 @@ hardware.CRT_R_DetectCard = handle => {
     const cardInfo = ref.alloc(ref.types.byte);
     const res = libcrt.CRT_R_DetectCard(handle, cardType, cardInfo);
     if (res === 0) {
-      return { status: 0, data: { cardType: cardType.deref(), cardInfo: cardInfo.deref() } };
+      return { error: 0, data: { cardType: cardType.deref(), cardInfo: cardInfo.deref() } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -253,11 +253,11 @@ hardware.CPU_ColdReset = (handle, mode) => {
     const data = ref.alloc(ref.types.char);
     const res = libcrt.CPU_ColdReset(handle, mode, cpuType, data, len);
     if (res === 0) {
-      return { status: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
+      return { error: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -268,11 +268,11 @@ hardware.CPU_WarmReset = handle => {
     const data = ref.alloc(ref.types.char);
     const res = libcrt.CPU_WarmReset(handle, cpuType, data, len);
     if (res === 0) {
-      return { status: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
+      return { error: 0, data: { cpuType: cpuType.deref(), exData: ref.reinterpret(data, len.deref()).toString() } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -284,11 +284,11 @@ hardware.CPU_T0_C_APDU = (handle, apduData) => {
     const res = libcrt.CPU_T0_C_APDU(handle, inData.length, inData, data, len);
     const outData = ref.reinterpret(data, len.deref());
     if (res === 0) {
-      return { status: 0, data: { exData: hex2Str(outData) } };
+      return { error: 0, data: { exData: hex2Str(outData) } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
@@ -300,11 +300,11 @@ hardware.CPU_T1_C_APDU = (handle, apduData) => {
     const res = libcrt.CPU_T1_C_APDU(handle, inData.length, inData, data, len);
     const outData = ref.reinterpret(data, len.deref());
     if (res === 0) {
-      return { status: 0, data: { exData: hex2Str(outData) } };
+      return { error: 0, data: { exData: hex2Str(outData) } };
     }
-    return { status: -1 };
+    return { error: -1 };
   } catch (e) {
-    return { status: -1 };
+    return { error: -1 };
   }
 };
 
