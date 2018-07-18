@@ -67,7 +67,6 @@ const libcrt = ffi.Library(path.join(__dirname, './lib/CRT_310'), {
   CRT310_Reset: [ 'int', [ 'pointer', 'int' ]], // 0=不弹卡 1=前端弹卡 2=后端弹卡
   CRT310_CardSetting: [ 'int', [ 'pointer', 'int', 'int' ]],
   CRT310_CardPosition: [ 'int', [ 'pointer', 'int' ]],
-  CRT310_Geterror: [ 'int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
   CRT310_MovePosition: [ 'int', [ 'pointer', 'int' ]],
   MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', 'pointer', 'pointer' ]],
   CRT_IC_CardOpen: [ 'int', [ 'pointer' ]],
