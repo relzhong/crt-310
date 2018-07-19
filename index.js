@@ -176,7 +176,9 @@ hardware.MC_ReadTrack = (handle, track) => {
       let track1;
       let track2;
       let track3;
-      const blockData = ref.reinterpret(data, len.deref());
+	  let dataLen = len.deref();
+	  if (dataLen > 1000) dataLen = 0;
+      const blockData = ref.reinterpret(data, dataLen);
       const blocks = bsplit(blockData, Buffer.from([ 0x1f ])).slice(1);
       if (blocks[0]) {
         track1 = (blocks[0][0] === 0x59) ? blocks[0].slice(1).toString() : undefined;
