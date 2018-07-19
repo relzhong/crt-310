@@ -6,10 +6,7 @@ const R = require('ramda');
 const Decimal = require('decimal.js');
 const hardware = {};
 const intPtr = ref.refType('int');
-const ArrayType = require('ref-array');
-const ByteArray = ArrayType(ref.types.byte);
 
-const byteArrayPtr = ref.refType(ByteArray);
 /**
    * 字符串转Hex Buffer
    * @param {String} req 字符 { 0 ~ F }

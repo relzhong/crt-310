@@ -13,7 +13,6 @@
     "decimal.js": "^10.0.1",
     "ffi": "^2.2.0",
     "ramda": "^0.25.0",
-    "ref-array": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
