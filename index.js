@@ -5,7 +5,11 @@ const bsplit = require('buffer-split');
 const R = require('ramda');
 const Decimal = require('decimal.js');
 const hardware = {};
+const intPtr = ref.refType('int');
+const ArrayType = require('ref-array');
+const ByteArray = ArrayType(ref.types.byte);
 
+const byteArrayPtr = ref.refType(ByteArray);
 /**
    * 字符串转Hex Buffer
    * @param {String} req 字符 { 0 ~ F }
@@ -69,7 +73,7 @@ const libcrt = ffi.Library(path.join(__dirname, './lib/CRT_310'), {
   CRT310_CardPosition: [ 'int', [ 'pointer', 'int' ]],
   CRT310_GetStatus: ['int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
   CRT310_MovePosition: [ 'int', [ 'pointer', 'int' ]],
-  MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', 'pointer', 'pointer' ]],
+  MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', intPtr, 'pointer']],
   CRT_IC_CardOpen: [ 'int', [ 'pointer' ]],
   CRT_IC_CardClose: [ 'int', [ 'pointer', 'int' ]],
   CRT_R_DetectCard: [ 'int', [ 'pointer', 'pointer', 'pointer' ]],
@@ -169,15 +173,16 @@ hardware.CRT310_GetStatus = handle => {
 
 hardware.MC_ReadTrack = (handle, track) => {
   try {
-    const len = ref.alloc(ref.types.byte);
-    const data = ref.alloc(ref.types.char);
+    const len = ref.alloc('int');
+	var data = new Buffer(500 * ref.types.uchar.size);
+	data.type = ref.types.uchar;
     const res = libcrt.MC_ReadTrack(handle, 0x30, track, len, data);
     if (res === 0) {
       let track1;
       let track2;
       let track3;
 	  let dataLen = len.deref();
-	  if (dataLen > 1000) dataLen = 0;
+	  if (dataLen > 500) dataLen = 0;
       const blockData = ref.reinterpret(data, dataLen);
       const blocks = bsplit(blockData, Buffer.from([ 0x1f ])).slice(1);
       if (blocks[0]) {

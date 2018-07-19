@@ -1,6 +1,6 @@
 {
   "name": "crt-310",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Driver for crt-310",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
     "buffer-split": "^1.0.0",
     "decimal.js": "^10.0.1",
     "ffi": "^2.2.0",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "ref-array": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
