@@ -1,6 +1,6 @@
 {
   "name": "crt-310",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Driver for crt-310",
   "main": "index.js",
   "scripts": {
