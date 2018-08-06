@@ -6,36 +6,33 @@ const R = require('ramda');
 const Decimal = require('decimal.js');
 const hardware = {};
 const intPtr = ref.refType('int');
-const stack = require ('callsite');
+const stack = require('callsite');
 
 function hazardous(location) {
   const electronRegex = /[\\/]electron\.asar[\\/]/;
   const asarRegex = /^(?:^\\\\\?\\)?(.*\.asar)[\\/](.*)/;
   /* convert path when use electron asar unpack
    */
-  if (!path.isAbsolute (location)) {
+  if (!path.isAbsolute(location)) {
     return location;
   }
 
-  if (electronRegex.test (location)) {
+  if (electronRegex.test(location)) {
     return location;
   }
 
-  const matches = asarRegex.exec (location);
+  const matches = asarRegex.exec(location);
   if (!matches || matches.length !== 3) {
     return location;
   }
-  const archive = matches[1];
-  const fileName = matches[2];
-  const unpackedFilePath = _path.join (`${archive}.unpacked`, fileName);
 
   /* Skip monkey patching when an electron method is in the callstack. */
-  const skip = stack ().some (site => {
-    const siteFile = site.getFileName ();
-    return /^ELECTRON_ASAR/.test (siteFile) || electronRegex.test (siteFile);
+  const skip = stack().some(site => {
+    const siteFile = site.getFileName();
+    return /^ELECTRON_ASAR/.test(siteFile) || electronRegex.test(siteFile);
   });
 
-  return skip ? location  : location.replace (/\.asar([\\/])/, '.asar.unpacked$1');
+  return skip ? location : location.replace(/\.asar([\\/])/, '.asar.unpacked$1');
 }
 
 /**
@@ -99,9 +96,9 @@ const libcrt = ffi.Library(hazardous(path.join(__dirname, './lib/CRT_310')), {
   CRT310_Reset: [ 'int', [ 'pointer', 'int' ]], // 0=不弹卡 1=前端弹卡 2=后端弹卡
   CRT310_CardSetting: [ 'int', [ 'pointer', 'int', 'int' ]],
   CRT310_CardPosition: [ 'int', [ 'pointer', 'int' ]],
-  CRT310_GetStatus: ['int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
+  CRT310_GetStatus: [ 'int', [ 'pointer', 'pointer', 'pointer', 'pointer' ]],
   CRT310_MovePosition: [ 'int', [ 'pointer', 'int' ]],
-  MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', intPtr, 'pointer']],
+  MC_ReadTrack: [ 'int', [ 'pointer', 'int', 'int', intPtr, 'pointer' ]],
   CRT_IC_CardOpen: [ 'int', [ 'pointer' ]],
   CRT_IC_CardClose: [ 'int', [ 'pointer', 'int' ]],
   CRT_R_DetectCard: [ 'int', [ 'pointer', 'pointer', 'pointer' ]],
@@ -202,15 +199,15 @@ hardware.CRT310_GetStatus = handle => {
 hardware.MC_ReadTrack = (handle, track) => {
   try {
     const len = ref.alloc('int');
-	var data = new Buffer(500 * ref.types.uchar.size);
-	data.type = ref.types.uchar;
+    const data = new Buffer(500 * ref.types.uchar.size);
+    data.type = ref.types.uchar;
     const res = libcrt.MC_ReadTrack(handle, 0x30, track, len, data);
     if (res === 0) {
       let track1;
       let track2;
       let track3;
-	  let dataLen = len.deref();
-	  if (dataLen > 500) dataLen = 0;
+      let dataLen = len.deref();
+      if (dataLen > 500) dataLen = 0;
       const blockData = ref.reinterpret(data, dataLen);
       const blocks = bsplit(blockData, Buffer.from([ 0x1f ])).slice(1);
       if (blocks[0]) {
