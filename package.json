@@ -1,6 +1,6 @@
 {
   "name": "crt-310",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "description": "Driver for crt-310",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "buffer-split": "^1.0.0",
+    "callsite": "^1.0.0",
     "decimal.js": "^10.0.1",
     "ffi": "^2.2.0",
     "ramda": "^0.25.0"
